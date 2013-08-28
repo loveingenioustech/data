@@ -144,7 +144,9 @@ begin
     end if;
   
     -- Grant access to subscribers
-/*    v_grant_sql := 'grant select on' || v_change_table_name || 'to cdcsub';
+    
+/*  comment this for encounting privilege issues 
+    v_grant_sql := 'grant select on' || v_change_table_name || 'to cdcsub';
   
     BEGIN
       execute immediate v_grant_sql;
