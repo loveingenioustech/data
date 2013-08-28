@@ -24,11 +24,11 @@ create or replace PROCEDURE create_publisher(i_schema_name     in varchar2,
   v_description       varchar2(2000);
   v_column_type_list  varchar2(2000);
   v_change_table_name varchar2(30);
-  --v_check_sql         varchar2(200);
   v_grant_sql varchar2(200);
   v_cs_cnt    number := 0;
   v_ct_cnt    number;
 begin
+  dbms_output.enable(50000);  
   dbms_output.put_line('======================================== Start ' ||
                        to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') ||
                        ' ========================================');
@@ -64,9 +64,7 @@ begin
   
   end if;
 
-  for r in cur_source_tables loop
-    dbms_output.enable(50000);
-  
+  for r in cur_source_tables loop  
     -- Create Change Table
     v_change_table_name := r.TABLE_NAME || '_CT';
     v_ct_cnt            := 0;
@@ -144,13 +142,12 @@ begin
     end if;
   
     -- Grant access to subscribers
+    v_grant_sql := 'grant select on ' || v_change_table_name || ' to cdcsub';
     
-/*  comment this for encounting privilege issues 
-    v_grant_sql := 'grant select on' || v_change_table_name || 'to cdcsub';
-  
     BEGIN
       execute immediate v_grant_sql;
-    END;*/
+    END;
+    dbms_output.put_line('Grant: ' || v_grant_sql);
   
   end loop;
 
