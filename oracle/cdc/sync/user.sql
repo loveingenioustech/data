@@ -13,6 +13,7 @@ drop user cdcsub;
 CREATE USER cdcsub IDENTIFIED by cdcsub DEFAULT TABLESPACE ts_cdcpub;
 
 -- Grant privileges
+grant dba to cdcpub;
 GRANT CREATE SESSION TO cdcpub;
 GRANT CREATE TABLE TO cdcpub;
 GRANT CREATE TABLESPACE TO cdcpub;
