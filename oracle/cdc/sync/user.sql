@@ -26,3 +26,6 @@ GRANT ALL ON sh.products TO cdcpub;
 GRANT EXECUTE ON DBMS_CDC_PUBLISH TO cdcpub;
 
 grant dba to cdcsub;
+
+grant select on all_change_sets to cdcpub;
+grant select on all_change_tables to cdcpub;
