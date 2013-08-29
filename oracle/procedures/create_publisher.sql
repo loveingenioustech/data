@@ -24,11 +24,11 @@ create or replace PROCEDURE create_publisher(i_schema_name     in varchar2,
   v_description       varchar2(2000);
   v_column_type_list  varchar2(2000);
   v_change_table_name varchar2(30);
-  v_grant_sql varchar2(200);
-  v_cs_cnt    number := 0;
-  v_ct_cnt    number;
+  v_grant_sql         varchar2(200);
+  v_cs_cnt            number := 0;
+  v_ct_cnt            number;
 begin
-  dbms_output.enable(50000);  
+  dbms_output.enable(50000);
   dbms_output.put_line('======================================== Start ' ||
                        to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') ||
                        ' ========================================');
@@ -64,7 +64,7 @@ begin
   
   end if;
 
-  for r in cur_source_tables loop  
+  for r in cur_source_tables loop
     -- Create Change Table
     v_change_table_name := r.TABLE_NAME || '_CT';
     v_ct_cnt            := 0;
@@ -83,7 +83,8 @@ begin
                               r_col.DATA_TYPE;
       
         if r_col.DATA_TYPE = 'CHAR' or r_col.DATA_TYPE = 'NCHAR' or
-           r_col.DATA_TYPE = 'NVARCHAR2' or r_col.DATA_TYPE = 'VARCHAR2' then
+           r_col.DATA_TYPE = 'NVARCHAR2' or r_col.DATA_TYPE = 'VARCHAR2' or
+           r_col.DATA_TYPE = 'RAW' then
           v_column_type_list := v_column_type_list || '(' ||
                                 r_col.DATA_LENGTH || ')';
         end if;
@@ -132,7 +133,7 @@ begin
                                              DDL_MARKERS       => 'n',
                                              options_string    => 'TABLESPACE TS_CDCPUB');
       END;
-
+    
       dbms_output.put_line('Create Change Table: ' || r.TABLE_NAME ||
                            ' successfully!');
     
@@ -142,8 +143,9 @@ begin
     end if;
   
     -- Grant access to subscribers
-    v_grant_sql := 'grant select on ' || v_change_table_name || ' to cdcsub';
-    
+    v_grant_sql := 'grant select on ' || v_change_table_name ||
+                   ' to cdcsub';
+  
     BEGIN
       execute immediate v_grant_sql;
     END;
