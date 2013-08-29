@@ -27,6 +27,7 @@ create or replace PROCEDURE create_publisher(i_schema_name     in varchar2,
   v_grant_sql         varchar2(200);
   v_cs_cnt            number := 0;
   v_ct_cnt            number;
+  v_data_length       number;
 begin
   dbms_output.enable(50000);
   dbms_output.put_line('======================================== Start ' ||
@@ -85,8 +86,14 @@ begin
         if r_col.DATA_TYPE = 'CHAR' or r_col.DATA_TYPE = 'NCHAR' or
            r_col.DATA_TYPE = 'NVARCHAR2' or r_col.DATA_TYPE = 'VARCHAR2' or
            r_col.DATA_TYPE = 'RAW' then
-          v_column_type_list := v_column_type_list || '(' ||
-                                r_col.DATA_LENGTH || ')';
+        
+          if r_col.DATA_TYPE = 'NVARCHAR2' then
+            v_data_length := r_col.DATA_LENGTH / 2;
+          else
+            v_data_length := r_col.DATA_LENGTH;
+          end if;
+        
+          v_column_type_list := v_column_type_list || '(' || v_data_length || ')';
         end if;
       
         if r_col.DATA_TYPE = 'NUMBER' then
