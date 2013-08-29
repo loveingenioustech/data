@@ -79,8 +79,8 @@ begin
       v_column_type_list := '';
       for r_col in cur_table_cols(r.TABLE_NAME) loop
         -- Common for all data types
-        v_column_type_list := v_column_type_list || r_col.COLUMN_NAME || ' ' ||
-                              r_col.DATA_TYPE;
+        v_column_type_list := v_column_type_list || '"' ||
+                              r_col.COLUMN_NAME || '" ' || r_col.DATA_TYPE;
       
         if r_col.DATA_TYPE = 'CHAR' or r_col.DATA_TYPE = 'NCHAR' or
            r_col.DATA_TYPE = 'NVARCHAR2' or r_col.DATA_TYPE = 'VARCHAR2' or
