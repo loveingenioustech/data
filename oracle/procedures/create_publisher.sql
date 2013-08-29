@@ -125,6 +125,7 @@ begin
                                    1,
                                    length(v_column_type_list) - 1);
     
+      /*      
       if length(v_column_type_list) > 255 then
         dbms_output.put_line('column_type_list for table - ' ||
                              r.TABLE_NAME || ': ');
@@ -138,6 +139,7 @@ begin
         dbms_output.put_line('column_type_list for table - ' ||
                              r.TABLE_NAME || ': ' || v_column_type_list);
       end if;
+      */
     
       -- TODO add parse for i_options
       BEGIN
