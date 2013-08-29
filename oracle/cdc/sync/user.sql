@@ -29,3 +29,6 @@ grant dba to cdcsub;
 
 grant select on all_change_sets to cdcpub;
 grant select on all_change_tables to cdcpub;
+
+grant execute on dbms_lock to cdcpub;
+grant execute on dbms_lock to cdcsub;
