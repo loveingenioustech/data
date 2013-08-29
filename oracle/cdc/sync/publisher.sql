@@ -30,3 +30,20 @@ END;
 
 -- Grant access to subscribers
 grant select on event_ct to cdcsub;
+
+-- Be careful with drop
+-- Must drop change tables first
+select * from all_change_sets;
+select * from all_change_tables;
+
+BEGIN
+  DBMS_CDC_PUBLISH.DROP_CHANGE_TABLE(owner             => 'cdcpub',
+                                     change_table_name => 'EVENT_CT',
+                                     force_flag        => 'Y');
+END;
+/  
+
+BEGIN
+  DBMS_CDC_PUBLISH.DROP_CHANGE_SET(change_set_name => 'EVENT_DAILY');
+END;
+/
