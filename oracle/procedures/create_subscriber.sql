@@ -23,10 +23,8 @@ create or replace PROCEDURE create_subscriber(i_schema_name     in varchar2,
 
   v_description varchar2(2000);
   v_column_list varchar2(2000);
-
-  v_change_table_name varchar2(30);
   v_subscription_name varchar2(30);
-  v_subscriber_view   varchar2(30);
+  v_subscriber_view   varchar2(50);
   v_sub_cnt           number := 0;
   v_st_cnt            number;
 
@@ -79,6 +77,10 @@ begin
   for r_tab in cur_source_tables loop
     -- Subscribe to a source table and the columns in the source table
     v_subscriber_view := r_tab.TABLE_NAME || '_VIEW';
+    if length(v_subscriber_view) > 30 then
+      v_subscriber_view := substr(v_subscriber_view, 1, 30);
+    end if;    
+    
     v_st_cnt          := 0;
   
     select count(*)
@@ -91,14 +93,20 @@ begin
     if v_st_cnt = 0 then
       v_column_list := ''; 
       for r_col in cur_table_cols(r_tab.TABLE_NAME) loop
+        -- Ignore LONG RAW
+        if r_col.DATA_TYPE = 'LONG RAW' then
+          continue;
+        end if;   
+      
         v_column_list := v_column_list || r_col.COLUMN_NAME || ',';
       end loop;
     
       -- remove last comma
       v_column_list := substr(v_column_list, 1, length(v_column_list) - 1);
+      /*
       dbms_output.put_line('column_type_list for table - ' ||
                            r_tab.TABLE_NAME || ': ' || v_column_list);
-    
+      */
       BEGIN
         DBMS_CDC_SUBSCRIBE.SUBSCRIBE(subscription_name => v_subscription_name,
                                      source_schema     => upper(i_schema_name),
