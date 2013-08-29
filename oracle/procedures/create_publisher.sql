@@ -85,6 +85,11 @@ begin
     if v_ct_cnt = 0 then
       v_column_type_list := '';
       for r_col in cur_table_cols(r.TABLE_NAME) loop
+        -- Ignore LONG RAW
+        if r_col.DATA_TYPE = 'LONG RAW' then
+          continue;
+        end if;
+      
         -- Common for all data types
         v_column_type_list := v_column_type_list || '"' ||
                               r_col.COLUMN_NAME || '" ' || r_col.DATA_TYPE;
