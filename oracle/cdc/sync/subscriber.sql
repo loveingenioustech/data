@@ -49,9 +49,12 @@ END;
 /
 
 -- End the subscription
+-- When drop subscription, also droped all subscribed tables in the subscription
 BEGIN
   DBMS_CDC_SUBSCRIBE.DROP_SUBSCRIPTION(subscription_name => 'EVENT_SUB');
 END;
 /
 
-
+select * from all_subscriptions a;
+select * from all_subscribed_tables a;
+select * from all_subscribed_columns a;
