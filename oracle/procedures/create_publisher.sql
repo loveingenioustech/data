@@ -23,7 +23,7 @@ create or replace PROCEDURE create_publisher(i_schema_name     in varchar2,
 
   v_description       varchar2(2000);
   v_column_type_list  varchar2(2000);
-  v_change_table_name varchar2(30);
+  v_change_table_name varchar2(50);
   v_grant_sql         varchar2(200);
   v_cs_cnt            number := 0;
   v_ct_cnt            number;
@@ -66,9 +66,15 @@ begin
   end if;
 
   for r in cur_source_tables loop
+    dbms_output.put_line('>>> ' || r.TABLE_NAME);
     -- Create Change Table
     v_change_table_name := r.TABLE_NAME || '_CT';
-    v_ct_cnt            := 0;
+  
+    if length(v_change_table_name) > 30 then
+      v_change_table_name := substr(v_change_table_name, 1, 30);
+    end if;
+  
+    v_ct_cnt := 0;
     select count(*)
       into v_ct_cnt
       from all_change_tables a
@@ -118,8 +124,20 @@ begin
       v_column_type_list := substr(v_column_type_list,
                                    1,
                                    length(v_column_type_list) - 1);
-      dbms_output.put_line('column_type_list for table - ' || r.TABLE_NAME || ': ' ||
-                           v_column_type_list);
+    
+      if length(v_column_type_list) > 255 then
+        dbms_output.put_line('column_type_list for table - ' ||
+                             r.TABLE_NAME || ': ');
+      
+        for i in 1 .. ceil(length(v_column_type_list) / 255) loop
+          dbms_output.put_line(substr(v_column_type_list,
+                                      (i - 1) * 255 + 1,
+                                      255));
+        end loop;
+      else
+        dbms_output.put_line('column_type_list for table - ' ||
+                             r.TABLE_NAME || ': ' || v_column_type_list);
+      end if;
     
       -- TODO add parse for i_options
       BEGIN
@@ -158,6 +176,8 @@ begin
     END;
     dbms_output.put_line('Grant: ' || v_grant_sql);
   
+    dbms_output.put_line('<<< ' || r.TABLE_NAME);
+    dbms_output.new_line();
   end loop;
 
   dbms_output.put_line('======================================== End ' ||
