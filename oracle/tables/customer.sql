@@ -1,3 +1,4 @@
+/*
 CREATE TABLE customer(customer_id number NOT NULL,
                    first_name VARCHAR2(50) NOT NULL,
                    last_name VARCHAR2(50) NOT NULL,
@@ -5,3 +6,14 @@ CREATE TABLE customer(customer_id number NOT NULL,
                    update_user_id VARCHAR2(50),
                    update_time DATE,
                    CONSTRAINT PK_CUSTOMER PRIMARY KEY(customer_id)) LOGGING;
+*/
+
+CREATE TABLE CUSTOMER (C_ID NUMBER(5, 0), C_D_ID 
+  NUMBER(2, 0), C_W_ID NUMBER(4, 0), C_FIRST VARCHAR2(16), 
+  C_MIDDLE CHAR(2), C_LAST VARCHAR2(16), C_STREET_1 VARCHAR2(20), 
+  C_STREET_2 VARCHAR2(20), C_CITY VARCHAR2(20), C_STATE CHAR(2), 
+  C_ZIP CHAR(9), C_PHONE CHAR(16), C_SINCE DATE, C_CREDIT 
+  CHAR(2), C_CREDIT_LIM NUMBER(12, 2), C_DISCOUNT NUMBER(4, 4), 
+  C_BALANCE NUMBER(12, 2), C_YTD_PAYMENT NUMBER(12, 2), 
+  C_PAYMENT_CNT NUMBER(8, 0), C_DELIVERY_CNT NUMBER(8, 0), C_DATA 
+  VARCHAR2(500)) PCTFREE 10;
