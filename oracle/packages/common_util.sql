@@ -2,6 +2,8 @@ CREATE OR REPLACE PACKAGE common_util AS
 
   Type t_string_array is table of varchar2(4000);
 
+  TYPE t_string_table IS TABLE OF VARCHAR(20) INDEX BY BINARY_INTEGER;
+
   -- return pattern matches as array
   -- select * from table(common_util.match('select from event', '\from\'));
   function match(i_str in varchar2, i_pattern in varchar2)
@@ -14,6 +16,9 @@ CREATE OR REPLACE PACKAGE common_util AS
                           i_table_prefix     in varchar2,
                           i_estimate_percent in number,
                           i_magnify_times    in number);
+                          
+  function  createTokenList(pLine IN VARCHAR2, pDelimiter IN VARCHAR2)
+    RETURN t_string_table;                                                 
 END common_util;
 
 
@@ -276,6 +281,51 @@ CREATE OR REPLACE PACKAGE BODY common_util AS
     end loop;
   
   end find_sql_plan;
+
+  --  ==================================================================
+  --  Function: createTokenList
+  --
+  -- This function takes a string with "tokens" delimited by pDelimiter
+  -- and put each "token" into a separate record in a PL/SQL collection. The
+  -- PL/SQL collection is returned back to the caller of the function.
+  --  ==================================================================
+  FUNCTION createTokenList(pLine      IN VARCHAR2,
+                                             pDelimiter IN VARCHAR2)
+    RETURN t_string_table IS
+    sLine     VARCHAR2(2000);
+    nPos      INTEGER;
+    nPosOld   INTEGER;
+    nIndex    INTEGER;
+    nLength   INTEGER;
+    nCnt      INTEGER;
+    sToken    VARCHAR2(200);
+    tTokenTab t_string_table;
+  BEGIN
+    sLine := pLine;
+    IF (SUBSTR(sLine, LENGTH(sLine), 1) <> '|') THEN
+      sLine := sLine || '|';
+    END IF;
+
+    nPos    := 0;
+    sToken  := '';
+    nLength := LENGTH(sLine);
+    nCnt    := 0;
+
+    FOR nIndex IN 1 .. nLength LOOP
+      IF ((SUBSTR(sLine, nIndex, 1) = pDelimiter) OR (nIndex = nLength)) THEN
+        nPosOld := nPos;
+        nPos    := nIndex;
+        nCnt    := nCnt + 1;
+        sToken  := SUBSTR(sLine, nPosOld + 1, nPos - nPosOld - 1);
+      
+        tTokenTab(nCnt) := sToken;
+      END IF;
+    
+    END LOOP;
+
+    RETURN tTokenTab;
+  END createTokenList;
+
 
 END common_util;
 
